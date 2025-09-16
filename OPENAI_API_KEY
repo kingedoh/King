@@ -1,0 +1,63 @@
+{
+  "name": "assistantai-parser-glitch",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "openai": "^4.0.0"
+  }
+}import express from "express";
+import bodyParser from "body-parser";
+import OpenAI from "openai";
+
+const app = express();
+app.use(bodyParser.json());
+
+// Use process.env.OPENAI_API_KEY (we'll set it in Glitch secrets)
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const systemPrompt = `You are an AI that extracts intents from natural language into structured JSON.
+Return ONLY valid JSON in this exact shape:
+{ "intent": <string>, "confidence": <number 0-1>, "params": { ... } }
+Valid intents: send_sms, open_app, set_alarm, speak, unknown.
+If unsure, return "unknown" with confidence 0.2 and params { "text": "<original text>" }.`;
+
+app.post("/parse", async (req, res) => {
+  const text = req.body?.text;
+  if (!text) return res.status(400).json({ error: "Missing text in request body" });
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: text }
+      ],
+      temperature: 0.0,
+      max_tokens: 300
+    });
+
+    const raw = completion.choices?.[0]?.message?.content?.trim() || "";
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      // fallback if model didn't give clean JSON
+      parsed = { intent: "unknown", confidence: 0.2, params: { text } };
+    }
+    return res.json(parsed);
+  } catch (err) {
+    console.error("Parse error:", err);
+    return res.status(500).json({ error: "Server error", details: String(err) });
+  }
+});
+
+app.get("/", (req, res) => res.send("AssistantAI parser running"));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
