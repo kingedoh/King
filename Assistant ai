@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AssistantAI Web</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background: #f0f4f8;
+    }
+    h1 {
+      color: #333;
+    }
+    textarea {
+      width: 90%;
+      max-width: 400px;
+      height: 100px;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #999;
+    }
+    pre {
+      text-align: left;
+      width: 90%;
+      max-width: 400px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>AssistantAI 🌐</h1>
+  <textarea id="userText" placeholder="Type something... e.g. 'Set alarm for 7am'"></textarea>
+  <button id="sendBtn">Ask AI</button>
+  <pre id="output">Response will appear here...</pre>  <script>
+    const sendBtn = document.getElementById("sendBtn");
+    const userText = document.getElementById("userText");
+    const output = document.getElementById("output");
+
+    sendBtn.onclick = async () => {
+      const text = userText.value.trim();
+      if (!text) return;
+
+      sendBtn.disabled = true;
+      output.textContent = "Thinking... ⏳";
+
+      try {
+        const res = await fetch("https://assistant-ai-parser.onrender.com/parse", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+
+        const data = await res.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = "❌ Error: " + err.message;
+      } finally {
+        sendBtn.disabled = false;
+      }
+    };
+  </script></body>
+</html><!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AssistantAI Web</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background: #f0f4f8;
+    }
+    h1 {
+      color: #333;
+    }
+    textarea {
+      width: 90%;
+      max-width: 400px;
+      height: 100px;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #999;
+    }
+    pre {
+      text-align: left;
+      width: 90%;
+      max-width: 400px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>AssistantAI 🌐</h1>
+  <textarea id="userText" placeholder="Type something... e.g. 'Set alarm for 7am'"></textarea>
+  <button id="sendBtn">Ask AI</button>
+  <pre id="output">Response will appear here...</pre>  <script>
+    const sendBtn = document.getElementById("sendBtn");
+    const userText = document.getElementById("userText");
+    const output = document.getElementById("output");
+
+    sendBtn.onclick = async () => {
+      const text = userText.value.trim();
+      if (!text) return;
+
+      sendBtn.disabled = true;
+      output.textContent = "Thinking... ⏳";
+
+      try {
+        const res = await fetch("https://assistant-ai-parser.onrender.com/parse", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+
+        const data = await res.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = "❌ Error: " + err.message;
+      } finally {
+        sendBtn.disabled = false;
+      }
+    };
+  </script></body>
+</html>
